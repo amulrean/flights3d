@@ -1,3 +1,8 @@
-<p>
-  sidebar works!
-</p>
+
+<div>Current Selected: {{ (selectedTileSet$ | async)?.name }}</div>
+<div *ngFor="let tileSet of tileSets">
+  <button (click)="selectTileSet(tileSet)">{{ tileSet.name }}</button>
+</div>
+
+
+<button (click)="reset()">Reset Counter</button>

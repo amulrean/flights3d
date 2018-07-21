@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {getSelectedTileSet, MapState} from '../reducers';
+import {select, Store} from '@ngrx/store';
+import {TileSet} from '../models/map';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
 
   viewer;
+  selectedTileSet$: Observable<TileSet>;
+  selectedTileSetSub: Subscription;
 
-  constructor() { }
+  constructor(private store: Store<MapState>) {
+    this.selectedTileSet$ = store.pipe(
+      select(getSelectedTileSet)
+    );
+  }
 
   ngOnInit() {
     // tslint:disable-next-line:max-line-length
@@ -18,10 +28,19 @@ export class MapComponent implements OnInit {
       sceneMode: Cesium.SceneMode.SCENE3D,
     });
 
-    const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url : 'https://s3.amazonaws.com/amulrean-vricon/usa/washington_dc/tileset.json'
-    }));
-    this.viewer.zoomTo(tileset);
+    this.selectedTileSetSub = this.selectedTileSet$.subscribe(selectedTileSet => {
+      if (selectedTileSet) {
+        const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+          url: selectedTileSet.url
+        }));
+        this.viewer.zoomTo(tileset);
+      }
+
+    });
+  }
+
+  ngOnDestroy() {
+    this.selectedTileSetSub.unsubscribe();
   }
 
 }
