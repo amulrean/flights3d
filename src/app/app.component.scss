@@ -1,0 +1,19 @@
+:host {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+app-sidebar {
+  width: 300px;
+}
+
+app-map {
+  width: 100%;
+}
