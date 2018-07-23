@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {getSelectedTileSet, MapState} from '../reducers';
 import {select, Store} from '@ngrx/store';
 import {TileSet} from '../models/map';
 import {Observable, Subscription} from 'rxjs';
+import {getSelectedTileSet, MapState} from '../reducers/map';
+import {OpenSkyState} from '../models/planes';
+import {getLiveStates} from '../reducers/planes';
 
 @Component({
   selector: 'app-map',
@@ -13,11 +15,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   viewer;
   selectedTileSet$: Observable<TileSet>;
-  selectedTileSetSub: Subscription;
+  liveStates$: Observable<OpenSkyState[]>;
+  subscriptions: Subscription[] = [];
 
   constructor(private store: Store<MapState>) {
     this.selectedTileSet$ = store.pipe(
       select(getSelectedTileSet)
+    );
+    this.liveStates$ = store.pipe(
+      select(getLiveStates)
     );
   }
 
@@ -28,19 +34,45 @@ export class MapComponent implements OnInit, OnDestroy {
       sceneMode: Cesium.SceneMode.SCENE3D,
     });
 
-    this.selectedTileSetSub = this.selectedTileSet$.subscribe(selectedTileSet => {
-      if (selectedTileSet) {
-        const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-          url: selectedTileSet.url
-        }));
-        this.viewer.zoomTo(tileset);
-      }
+    this.subscriptions.push(
+      this.selectedTileSet$.subscribe(selectedTileSet => {
+        if (selectedTileSet) {
+          const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+            url: selectedTileSet.url
+          }));
+          this.viewer.zoomTo(tileset);
+        }
+      }));
 
-    });
+    this.subscriptions.push(
+      this.liveStates$.subscribe(liveState => {
+        this.addPlanes(liveState);
+      }));
   }
 
   ngOnDestroy() {
-    this.selectedTileSetSub.unsubscribe();
+    this.subscriptions.map(sub => sub.unsubscribe());
   }
 
+  addPlanes(liveState: OpenSkyState[]) {
+    this.viewer.entities.removeAll();
+    for (const planeState of liveState) {
+      if (!planeState.on_ground && planeState.callsign) {
+        this.viewer.entities.add({
+          name: planeState.callsign,
+          position: Cesium.Cartesian3.fromDegrees(planeState.longitude, planeState.latitude, planeState.geo_altitude),
+          point: {
+            pixelSize: 5,
+            color: Cesium.Color.RED,
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 2
+          },
+          label: {
+            text: `${planeState.callsign} - ${planeState.velocity}`,
+          }
+        });
+      }
+    }
+
+  }
 }

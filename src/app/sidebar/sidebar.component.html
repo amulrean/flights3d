@@ -6,3 +6,11 @@
 
 
 <button (click)="reset()">Reset Counter</button>
+
+<div>Live States: {{ (liveStatesLength$ | async) }}</div>
+
+<button (click)="refreshPlanes()">Refresh Planes</button>
+
+<div *ngFor="let planeState of (liveStates$ | async)">
+  {{ planeState.callsign }} - {{ planeState.velocity }}
+</div>

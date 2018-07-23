@@ -9,6 +9,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import {MapComponent} from './map/map.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
+import {EffectsModule} from '@ngrx/effects';
+import {PlanesEffects} from './effects/planes.effects';
+import {HttpClientModule} from '@angular/common/http';
 
 
 @NgModule({
@@ -20,8 +23,10 @@ import {reducers} from './reducers';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     AppCustomMaterialImportsModule,
-    StoreModule.forRoot(reducers)
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([PlanesEffects])
   ],
   providers: [],
   bootstrap: [AppComponent]
