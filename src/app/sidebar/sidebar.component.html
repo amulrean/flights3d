@@ -10,7 +10,19 @@
 <div>Live States: {{ (liveStatesLength$ | async) }}</div>
 
 <button (click)="refreshPlanes()">Refresh Planes</button>
-
-<div *ngFor="let planeState of (liveStates$ | async)">
-  {{ planeState.callsign }} - {{ planeState.velocity }}
-</div>
+<mat-list>
+  <mat-list-item *ngFor="let planeItem of (liveStates$ | async | keyvalue)">
+    <!--<mat-icon matListIcon>folder</mat-icon>-->
+    <h3 matLine> {{planeItem.key}} </h3>
+    <p matLine>
+      <span> {{planeItem.value.origin_country}} </span>
+      <span> -- {{planeItem.value.currentState.velocity}} </span>
+    </p>
+    <p matLine>
+      <span> {{planeItem.value.currentState.time_position * 1000 | date: 'medium'}} </span>
+      </p>
+    <p matLine>
+      <span> -- {{planeItem.value.currentState.last_contact * 1000 | date: 'medium'}} </span>
+    </p>
+  </mat-list-item>
+</mat-list>

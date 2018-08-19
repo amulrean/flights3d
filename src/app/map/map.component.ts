@@ -3,8 +3,8 @@ import {select, Store} from '@ngrx/store';
 import {TileSet} from '../models/map';
 import {Observable, Subscription} from 'rxjs';
 import {getSelectedTileSet, MapState} from '../reducers/map';
-import {OpenSkyState} from '../models/planes';
-import {getLiveStates} from '../reducers/planes';
+import {LivePlanes, OpenSkyState} from '../models/planes';
+import {getLivePlanes} from '../reducers/planes';
 
 @Component({
   selector: 'app-map',
@@ -15,15 +15,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   viewer;
   selectedTileSet$: Observable<TileSet>;
-  liveStates$: Observable<OpenSkyState[]>;
+  livePlanes$: Observable<LivePlanes>;
   subscriptions: Subscription[] = [];
 
   constructor(private store: Store<MapState>) {
     this.selectedTileSet$ = store.pipe(
       select(getSelectedTileSet)
     );
-    this.liveStates$ = store.pipe(
-      select(getLiveStates)
+    this.livePlanes$ = store.pipe(
+      select(getLivePlanes)
     );
   }
 
@@ -32,6 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
     Cesium.Ion.defaultAccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2Y2VlNTZiMy04YzE5LTQ3OWYtYmQ0MC03NGZlODdlZmJhMDYiLCJpZCI6MjI0NCwiaWF0IjoxNTMyMTg3Mzc1fQ.6E2ATk75Gdk9uzyuTPd-QcHKksPxfqx82wifY2zJ5P0`;
     this.viewer = new Cesium.Viewer('cesiumContainer', {
       sceneMode: Cesium.SceneMode.SCENE3D,
+      // imageryProvider : new Cesium.ImageryProvider(),
     });
 
     this.subscriptions.push(
@@ -45,8 +46,8 @@ export class MapComponent implements OnInit, OnDestroy {
       }));
 
     this.subscriptions.push(
-      this.liveStates$.subscribe(liveState => {
-        this.addPlanes(liveState);
+      this.livePlanes$.subscribe(livePlanes => {
+        this.addPlanes(livePlanes);
       }));
   }
 
@@ -54,21 +55,50 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscriptions.map(sub => sub.unsubscribe());
   }
 
-  addPlanes(liveState: OpenSkyState[]) {
+  addPlanes(liveState: LivePlanes) {
     this.viewer.entities.removeAll();
-    for (const planeState of liveState) {
-      if (!planeState.on_ground && planeState.callsign) {
+    for (const planeKey of Object.keys(liveState)) {
+      const currentPlane = liveState[planeKey];
+
+      if (!currentPlane.currentState.on_ground && currentPlane.currentState.callsign) {
+
+        const sampledPosition = new Cesium.SampledPositionProperty();
+
+        for (const sampleState of currentPlane.states) {
+          const position = Cesium.Cartesian3.fromDegrees(
+            sampleState.longitude,
+            sampleState.latitude,
+            sampleState.geo_altitude
+          );
+          const time = Cesium.JulianDate.fromDate(new Date(sampleState.time_position * 1000));
+          sampledPosition.addSample(time, position);
+        }
+        const sampledAvailability = new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
+            start : Cesium.JulianDate.fromDate(new Date(currentPlane.states[0].time_position * 1000)),
+            stop : Cesium.JulianDate.fromDate(new Date(currentPlane.states[currentPlane.states.length - 1].time_position * 1000))
+        })]);
+
+        const heading = Cesium.Math.toRadians(currentPlane.currentState.true_track);
+        const pitch = 0;
+        const roll = 0;
+        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+        // const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+        const orientation = new Cesium.VelocityOrientationProperty(sampledPosition);
+        const url = 'assets/models/fr-24/b737.glb';
+        const model = {
+          uri : url,
+          minimumPixelSize : 128,
+          maximumScale : 20000
+        };
+
         this.viewer.entities.add({
-          name: planeState.callsign,
-          position: Cesium.Cartesian3.fromDegrees(planeState.longitude, planeState.latitude, planeState.geo_altitude),
-          point: {
-            pixelSize: 5,
-            color: Cesium.Color.RED,
-            outlineColor: Cesium.Color.WHITE,
-            outlineWidth: 2
-          },
+          name: currentPlane.currentState.callsign,
+          availability: sampledAvailability,
+          position: sampledPosition,
+          orientation: orientation,
+          model: model,
           label: {
-            text: `${planeState.callsign} - ${planeState.velocity}`,
+            text: `${currentPlane.currentState.icao24} - ${currentPlane.currentState.velocity}`,
           }
         });
       }

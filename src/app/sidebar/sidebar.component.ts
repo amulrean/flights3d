@@ -6,7 +6,7 @@ import {TileSet} from '../models/map';
 import {RefreshStatesAll} from '../actions/planes';
 import {getSelectedTileSet, MapState} from '../reducers/map';
 import {OpenSkyState} from '../models/planes';
-import {getLiveStates, getLiveStatesLength} from '../reducers/planes';
+import {getLivePlanes, getLivePlanesLength} from '../reducers/planes';
 
 @Component({
   selector: 'app-sidebar',
@@ -41,11 +41,11 @@ export class SidebarComponent implements OnInit {
     );
 
     this.liveStates$ = store.pipe(
-      select(getLiveStates)
+      select(getLivePlanes)
     );
 
     this.liveStatesLength$ = store.pipe(
-      select(getLiveStatesLength)
+      select(getLivePlanesLength)
     );
   }
 
@@ -62,7 +62,8 @@ export class SidebarComponent implements OnInit {
   }
 
   refreshPlanes() {
-    timer(0, 5000).subscribe( () => this.store.dispatch(new RefreshStatesAll()));
+    // timer(0, 5000).subscribe( () => this.store.dispatch(new RefreshStatesAll()));
+    this.store.dispatch(new RefreshStatesAll());
   }
 
 }
