@@ -1,6 +1,7 @@
 import {AppState} from './index';
 import {LivePlanes, OpenSkyState} from '../models/planes';
 import {PlanesActions, PlanesActionTypes} from '../actions/planes';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export interface PlanesState {
   currentTime: number;
@@ -75,5 +76,14 @@ export function planesReducer(state = initialState,
   }
 }
 
-export const getLivePlanes = (state: AppState) => state.planes.livePlanes;
-export const getLivePlanesLength = (state: AppState) => Object.keys(state.planes.livePlanes).length;
+export const getPlanesState = createFeatureSelector<PlanesState>('planes');
+
+export const getLivePlanes = createSelector(
+  getPlanesState,
+  state => state.livePlanes
+);
+
+export const getLivePlanesLength = createSelector(
+  getPlanesState,
+  state => Object.keys(state.livePlanes).length
+);

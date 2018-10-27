@@ -1,6 +1,8 @@
+import { MapState } from './map';
 import {TileSet} from '../models/map';
 import {AppState} from './index';
 import {MapActions, MapActionTypes} from '../actions/map';
+import { createFeatureSelector, State, createSelector } from '@ngrx/store';
 
 export interface MapState {
   selectedTileSet: TileSet;
@@ -30,4 +32,9 @@ export function mapReducer(state = initialState,
   }
 }
 
-export const getSelectedTileSet = (state: AppState) => state.map.selectedTileSet;
+export const getMapState = createFeatureSelector<MapState>('map');
+
+export const getSelectedTileSet = createSelector(
+  getMapState,
+  state => state.selectedTileSet
+);

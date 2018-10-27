@@ -1,3 +1,4 @@
+import { LivePlanes } from './../models/planes';
 import { Component, OnInit } from '@angular/core';
 import {Observable, timer} from 'rxjs';
 import {select, Store} from '@ngrx/store';
@@ -5,7 +6,6 @@ import {ResetPosition, SelectTileSet} from '../actions/map';
 import {TileSet} from '../models/map';
 import {RefreshStatesAll} from '../actions/planes';
 import {getSelectedTileSet, MapState} from '../reducers/map';
-import {OpenSkyState} from '../models/planes';
 import {getLivePlanes, getLivePlanesLength} from '../reducers/planes';
 
 @Component({
@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
 
   selectedTileSet$: Observable<TileSet>;
 
-  liveStates$: Observable<OpenSkyState[]>;
+  liveStates$: Observable<LivePlanes>;
   liveStatesLength$: Observable<number>;
 
   tileSets = [
