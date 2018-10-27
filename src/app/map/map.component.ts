@@ -60,7 +60,7 @@ export class MapComponent implements OnInit, OnDestroy {
     for (const planeKey of Object.keys(liveState)) {
       const currentPlane = liveState[planeKey];
 
-      if (!currentPlane.currentState.on_ground && currentPlane.currentState.callsign) {
+      if (currentPlane.currentState.callsign) {
 
         const sampledPosition = new Cesium.SampledPositionProperty();
 
@@ -78,31 +78,41 @@ export class MapComponent implements OnInit, OnDestroy {
             stop : Cesium.JulianDate.fromDate(new Date(currentPlane.states[currentPlane.states.length - 1].time_position * 1000))
         })]);
 
+        const currentPosition = Cesium.Cartesian3.fromDegrees(
+          currentPlane.currentState.longitude,
+          currentPlane.currentState.latitude,
+          currentPlane.currentState.geo_altitude
+        );
         const heading = Cesium.Math.toRadians(currentPlane.currentState.true_track);
         const pitch = 0;
         const roll = 0;
         const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-        // const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-        const orientation = new Cesium.VelocityOrientationProperty(sampledPosition);
+        const orientation = Cesium.Transforms.headingPitchRollQuaternion(currentPosition, hpr);
+        // const orientation = new Cesium.VelocityOrientationProperty(sampledPosition);
         const url = 'assets/models/fr-24/b737.glb';
+
+        const minimumPixelSize = currentPlane.currentState.on_ground ? 10 : 50;
+
         const model = {
           uri : url,
-          minimumPixelSize : 128,
+          minimumPixelSize : minimumPixelSize,
           maximumScale : 20000
         };
 
-        this.viewer.entities.add({
+        const newEntity = {
           name: currentPlane.currentState.callsign,
-          availability: sampledAvailability,
-          position: sampledPosition,
+          // availability: sampledAvailability,
+          // position: sampledPosition,
+          position: currentPosition,
           orientation: orientation,
           model: model,
-          label: {
-            text: `${currentPlane.currentState.icao24} - ${currentPlane.currentState.velocity}`,
-          }
-        });
+          // label: {
+          //   text: `${currentPlane.currentState.icao24} - ${currentPlane.currentState.geo_altitude}`,
+          // }
+        };
+        this.viewer.entities.add(newEntity);
       }
     }
-
+    this.viewer.flyTo(this.viewer.entities);
   }
 }
