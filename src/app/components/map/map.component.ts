@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {select, Store} from '@ngrx/store';
-import {Observable, Subscription} from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 import { TileSet, IMoveEndPayload, IRectangle, ICameraState } from '../../models/map';
 import { MapState, getSelectedTileSet } from '../../state/reducers/map';
 import { getAllCesiumPlaneEntities } from '../../state/reducers/cesium';
@@ -12,28 +12,25 @@ import { MoveEnd } from '../../state/actions/map';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, OnDestroy {
-
   viewer;
   selectedTileSet$: Observable<TileSet>;
   livePlanes$: Observable<any>;
   subscriptions: Subscription[] = [];
 
   constructor(private store: Store<MapState>) {
-    this.selectedTileSet$ = store.pipe(
-      select(getSelectedTileSet)
-    );
-    this.livePlanes$ = store.pipe(
-      select(getAllCesiumPlaneEntities)
-    );
+    this.selectedTileSet$ = store.pipe(select(getSelectedTileSet));
+    this.livePlanes$ = store.pipe(select(getAllCesiumPlaneEntities));
   }
 
   ngOnInit() {
-    // tslint:disable-next-line:max-line-length
-    // Cesium.Ion.defaultAccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2Y2VlNTZiMy04YzE5LTQ3OWYtYmQ0MC03NGZlODdlZmJhMDYiLCJpZCI6MjI0NCwiaWF0IjoxNTMyMTg3Mzc1fQ.6E2ATk75Gdk9uzyuTPd-QcHKksPxfqx82wifY2zJ5P0`;
+    const cartoLight = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+      credit: 'Map tiles by CartoDB'
+    });
     this.viewer = new Cesium.Viewer('cesiumContainer', {
       sceneMode: Cesium.SceneMode.SCENE3D,
       geocoder: false,
-      // imageryProvider : new Cesium.ImageryProvider(),
+      imageryProvider: cartoLight
     });
 
     this.viewer.camera.moveEnd.addEventListener(() => {
@@ -43,17 +40,21 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.selectedTileSet$.subscribe(selectedTileSet => {
         if (selectedTileSet) {
-          const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-            url: selectedTileSet.url
-          }));
+          const tileset = this.viewer.scene.primitives.add(
+            new Cesium.Cesium3DTileset({
+              url: selectedTileSet.url
+            })
+          );
           this.viewer.zoomTo(tileset);
         }
-      }));
+      })
+    );
 
     this.subscriptions.push(
       this.livePlanes$.subscribe(planeEntities => {
         this.addEntities(planeEntities);
-      }));
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -65,18 +66,17 @@ export class MapComponent implements OnInit, OnDestroy {
       const viewerEntity = this.viewer.entities.getOrCreateEntity(planeEntity.id);
       const keys = Object.keys(planeEntity);
       keys.forEach(value => {
-          if (value !== 'id') {
-            viewerEntity[value] = planeEntity[value];
-          }
+        if (value !== 'id') {
+          viewerEntity[value] = planeEntity[value];
+        }
       });
     });
-    this.viewer.flyTo(this.viewer.entities);
   }
 
   private getMoveEndPayload(): IMoveEndPayload {
     return {
       camera: this.getCurrentCameraState(),
-      viewRectangle: this.getCurrentViewRectangle(),
+      viewRectangle: this.getCurrentViewRectangle()
     };
   }
 
@@ -86,10 +86,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private getCurrentCameraState(): ICameraState {
     return {
-        position: this.viewer.camera.position,
-        heading: this.viewer.camera.heading,
-        pitch: this.viewer.camera.pitch,
-        roll: this.viewer.camera.roll
+      position: this.viewer.camera.position,
+      heading: this.viewer.camera.heading,
+      pitch: this.viewer.camera.pitch,
+      roll: this.viewer.camera.roll
     };
-}
+  }
 }
