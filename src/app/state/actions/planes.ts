@@ -1,12 +1,11 @@
-import {Action} from '@ngrx/store';
-import {OpenSkyStatesAllResponse} from '../../models/planes';
+import { Action } from '@ngrx/store';
+import { OpenSkyStatesAllResponse } from '../../models/planes';
 
 export enum PlanesActionTypes {
   RefreshStatesAll = '[Planes] Get States All',
   LoadStatesAll = '[Planes] Load States All',
   ClearStatesAll = '[Planes] Clear States All'
 }
-
 
 export class RefreshStatesAll implements Action {
   readonly type = PlanesActionTypes.RefreshStatesAll;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, timer} from 'rxjs';
-import {select, Store} from '@ngrx/store';
+import { Observable, timer } from 'rxjs';
+import { select, Store } from '@ngrx/store';
 import { TileSet } from '../../models/map';
 import { LivePlanes } from '../../models/planes';
 import { MapState, getSelectedTileSet } from '../../state/reducers/map';
@@ -14,7 +14,6 @@ import { RefreshStatesAll } from '../../state/actions/planes';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
-
   selectedTileSet$: Observable<TileSet>;
 
   liveStates$: Observable<LivePlanes>;
@@ -23,30 +22,24 @@ export class SidebarComponent implements OnInit {
   tileSets = [
     {
       name: 'Washington DC',
-      url : 'https://s3.amazonaws.com/amulrean-vricon/usa/washington_dc/tileset.json'
+      url: 'https://s3.amazonaws.com/amulrean-vricon/usa/washington_dc/tileset.json'
     },
     {
       name: 'North Korea',
-      url : 'https://s3.amazonaws.com/amulrean-vricon/north_korea/pyongyang/tileset.json'
+      url: 'https://s3.amazonaws.com/amulrean-vricon/north_korea/pyongyang/tileset.json'
     },
     {
       name: 'Brazil',
-      url : 'https://s3.amazonaws.com/amulrean-vricon/brazil/rio_de_janeiro/tileset.json'
-    },
+      url: 'https://s3.amazonaws.com/amulrean-vricon/brazil/rio_de_janeiro/tileset.json'
+    }
   ];
 
   constructor(private store: Store<MapState>) {
-    this.selectedTileSet$ = store.pipe(
-      select(getSelectedTileSet)
-    );
+    this.selectedTileSet$ = store.pipe(select(getSelectedTileSet));
 
-    this.liveStates$ = store.pipe(
-      select(getLivePlanes)
-    );
+    this.liveStates$ = store.pipe(select(getLivePlanes));
 
-    this.liveStatesLength$ = store.pipe(
-      select(getLivePlanesLength)
-    );
+    this.liveStatesLength$ = store.pipe(select(getLivePlanesLength));
   }
 
   ngOnInit() {
@@ -64,5 +57,4 @@ export class SidebarComponent implements OnInit {
   refreshPlanes() {
     this.store.dispatch(new RefreshStatesAll());
   }
-
 }

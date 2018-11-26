@@ -1,6 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatIconModule,
+  MatListModule,
+  MatSidenavModule,
+  MatToolbarModule
+} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -22,4 +29,4 @@ import {MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSid
   ],
   declarations: []
 })
-export class AppCustomMaterialImportsModule { }
+export class AppCustomMaterialImportsModule {}

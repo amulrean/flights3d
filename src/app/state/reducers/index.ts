@@ -1,6 +1,6 @@
-import {ActionReducerMap} from '@ngrx/store';
-import {mapReducer, MapState} from './map';
-import {planesReducer, PlanesState} from './planes';
+import { ActionReducerMap } from '@ngrx/store';
+import { mapReducer, MapState } from './map';
+import { planesReducer, PlanesState } from './planes';
 
 export interface AppState {
   map: MapState;

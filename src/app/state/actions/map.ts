@@ -1,12 +1,11 @@
-import {Action} from '@ngrx/store';
-import {TileSet, IMoveEndPayload} from '../../models/map';
+import { Action } from '@ngrx/store';
+import { TileSet, IMoveEndPayload } from '../../models/map';
 
 export enum MapActionTypes {
   SelectTileSet = '[Map] Select Tile Set',
   UnselectTile = '[Map] Unselect Tile Set',
-  MoveEnd = '[Map] Move End',
+  MoveEnd = '[Map] Move End'
 }
-
 
 export class SelectTileSet implements Action {
   readonly type = MapActionTypes.SelectTileSet;

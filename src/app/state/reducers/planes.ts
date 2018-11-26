@@ -1,5 +1,5 @@
-import { OpenSkyState, createOpenSkyState, addOrCreateOpenSkyStateToPlane, LivePlanes} from '../../models/planes';
-import {PlanesActions, PlanesActionTypes} from '../actions/planes';
+import { OpenSkyState, createOpenSkyState, addOrCreateOpenSkyStateToPlane, LivePlanes } from '../../models/planes';
+import { PlanesActions, PlanesActionTypes } from '../actions/planes';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export interface PlanesState {
@@ -12,13 +12,11 @@ const initialState: PlanesState = {
   livePlanes: {}
 };
 
-export function planesReducer(state = initialState,
-  action: PlanesActions): PlanesState {
+export function planesReducer(state = initialState, action: PlanesActions): PlanesState {
   switch (action.type) {
     case PlanesActionTypes.LoadStatesAll:
-
       const newLiveStates: OpenSkyState[] = [];
-      action.payload.states.map( stateArray => {
+      action.payload.states.map(stateArray => {
         const newState: OpenSkyState = createOpenSkyState(stateArray);
         newLiveStates.push(newState);
       });
@@ -33,7 +31,7 @@ export function planesReducer(state = initialState,
       return {
         ...state,
         currentTime: action.payload.time,
-        livePlanes: {...state.livePlanes}
+        livePlanes: { ...state.livePlanes }
       };
 
     case PlanesActionTypes.ClearStatesAll:

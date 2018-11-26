@@ -8,6 +8,7 @@
     "build": "ng build --prod",
     "test": "ng test",
     "format:fix": "pretty-quick --staged",
+    "pretty-quick": "pretty-quick",
     "precommit": "run-s format:fix lint",
     "lint": "ng lint",
     "e2e": "ng e2e"

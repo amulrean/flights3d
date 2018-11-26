@@ -3,16 +3,15 @@ import { createSelector } from '@ngrx/store';
 import { Plane } from '../../models/planes';
 
 export const getAllCesiumPlaneEntities = createSelector(
-    getAllPlanes,
-    planes => {
-      const returnEntitties = [];
-      planes.forEach(plane => {
-        returnEntitties.push(createPlaneEntity(plane));
-      });
-      return returnEntitties;
-    }
-  );
-
+  getAllPlanes,
+  planes => {
+    const returnEntitties = [];
+    planes.forEach(plane => {
+      returnEntitties.push(createPlaneEntity(plane));
+    });
+    return returnEntitties;
+  }
+);
 
 function createPlaneEntity(planeState: Plane) {
   const sampledPosition = new Cesium.SampledPositionProperty();
@@ -26,10 +25,12 @@ function createPlaneEntity(planeState: Plane) {
     const time = Cesium.JulianDate.fromDate(new Date(sampleState.time_position * 1000));
     sampledPosition.addSample(time, position);
   }
-  const sampledAvailability = new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
-      start : Cesium.JulianDate.fromDate(new Date(planeState.states[0].time_position * 1000)),
-      stop : Cesium.JulianDate.fromDate(new Date(planeState.states[planeState.states.length - 1].time_position * 1000))
-  })]);
+  const sampledAvailability = new Cesium.TimeIntervalCollection([
+    new Cesium.TimeInterval({
+      start: Cesium.JulianDate.fromDate(new Date(planeState.states[0].time_position * 1000)),
+      stop: Cesium.JulianDate.fromDate(new Date(planeState.states[planeState.states.length - 1].time_position * 1000))
+    })
+  ]);
 
   const currentPosition = Cesium.Cartesian3.fromDegrees(
     planeState.currentState.longitude,
@@ -47,9 +48,9 @@ function createPlaneEntity(planeState: Plane) {
   const minimumPixelSize = planeState.currentState.on_ground ? 10 : 50;
 
   const model = {
-    uri : url,
-    minimumPixelSize : minimumPixelSize,
-    maximumScale : 20000
+    uri: url,
+    minimumPixelSize: minimumPixelSize,
+    maximumScale: 20000
   };
 
   const newEntity = {
@@ -59,7 +60,7 @@ function createPlaneEntity(planeState: Plane) {
     // position: sampledPosition,
     position: currentPosition,
     orientation: orientation,
-    model: model,
+    model: model
     // label: {
     //   text: `${currentPlane.currentState.icao24} - ${currentPlane.currentState.geo_altitude}`,
     // }
