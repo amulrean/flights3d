@@ -1,3 +1,4 @@
+import { OpenSkyState, Plane } from './planes';
 // https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226
 
 // Washington DC
@@ -9,9 +10,29 @@
 // -77.651154,38.666108,-76.705472,39.173612
 // https://opensky-network.org/apidoc/rest.html#operation
 
+type OpenSkyStateResponse = [
+  string,
+  string,
+  string,
+  number,
+  number,
+  number,
+  number,
+  number,
+  boolean,
+  number,
+  number,
+  number,
+  number[],
+  number,
+  string,
+  boolean,
+  number
+];
+
 export interface OpenSkyStatesAllResponse {
   time: number;
-  states: any[][];
+  states: OpenSkyStateResponse[];
 }
 
 export interface OpenSkyState {
@@ -48,4 +69,46 @@ export interface Plane {
 
 export interface LivePlanes {
   [key: string]: Plane;
+}
+
+export function createOpenSkyState(stateArray: OpenSkyStateResponse): OpenSkyState {
+  return {
+    icao24:	stateArray[0],
+    callsign:	stateArray[1],
+    origin_country: stateArray[2],
+    time_position: stateArray[3],
+    last_contact:	stateArray[4],
+    longitude: stateArray[5],
+    latitude: stateArray[6],
+    geo_altitude:	stateArray[7],
+    on_ground:	stateArray[8],
+    velocity: stateArray[9],
+    true_track:	stateArray[10],
+    vertical_rate:	stateArray[11],
+    sensors:	stateArray[12],
+    baro_altitude: stateArray[13],
+    squawk:	stateArray[14],
+    spi:	stateArray[15],
+    position_source:	stateArray[16],
+  };
+}
+
+export function createPlaneFromState(openSkyState: OpenSkyState): Plane {
+  return {
+    icao24: openSkyState.icao24,
+    callsign: openSkyState.callsign,
+    origin_country: openSkyState.origin_country,
+    currentState: openSkyState,
+    states: [openSkyState]
+  };
+}
+
+export function addOrCreateOpenSkyStateToPlane(plane: Plane, openSkyState: OpenSkyState): Plane {
+  if (plane !== undefined) {
+    plane.currentState = openSkyState;
+    plane.states.push(openSkyState);
+    return plane;
+  } else {
+    return createPlaneFromState(openSkyState);
+  }
 }

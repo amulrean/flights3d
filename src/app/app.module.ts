@@ -12,7 +12,8 @@ import {reducers} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {PlanesEffects} from './effects/planes.effects';
 import {HttpClientModule} from '@angular/common/http';
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -26,9 +27,14 @@ import {HttpClientModule} from '@angular/common/http';
     HttpClientModule,
     AppCustomMaterialImportsModule,
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([PlanesEffects])
+    EffectsModule.forRoot([PlanesEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

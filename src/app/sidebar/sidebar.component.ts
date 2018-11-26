@@ -2,7 +2,7 @@ import { LivePlanes } from './../models/planes';
 import { Component, OnInit } from '@angular/core';
 import {Observable, timer} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {ResetPosition, SelectTileSet} from '../actions/map';
+import {UnselectTile, SelectTileSet} from '../actions/map';
 import {TileSet} from '../models/map';
 import {RefreshStatesAll} from '../actions/planes';
 import {getSelectedTileSet, MapState} from '../reducers/map';
@@ -58,11 +58,10 @@ export class SidebarComponent implements OnInit {
   }
 
   reset() {
-    this.store.dispatch(new ResetPosition());
+    this.store.dispatch(new UnselectTile());
   }
 
   refreshPlanes() {
-    // timer(0, 5000).subscribe( () => this.store.dispatch(new RefreshStatesAll()));
     this.store.dispatch(new RefreshStatesAll());
   }
 

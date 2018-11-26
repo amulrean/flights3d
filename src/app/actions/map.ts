@@ -1,9 +1,10 @@
 import {Action} from '@ngrx/store';
-import {TileSet} from '../models/map';
+import {TileSet, ICameraState, IRectangle, IMoveEndPayload} from '../models/map';
 
 export enum MapActionTypes {
   SelectTileSet = '[Map] Select Tile Set',
-  ResetPosition = '[Map] Reset Position',
+  UnselectTile = '[Map] Unselect Tile Set',
+  MoveEnd = '[Map] Move End',
 }
 
 
@@ -13,10 +14,16 @@ export class SelectTileSet implements Action {
   constructor(public payload: TileSet) {}
 }
 
-export class ResetPosition implements Action {
-  readonly type = MapActionTypes.ResetPosition;
+export class UnselectTile implements Action {
+  readonly type = MapActionTypes.UnselectTile;
 
   constructor() {}
 }
 
-export type MapActions = SelectTileSet | ResetPosition;
+export class MoveEnd implements Action {
+  readonly type = MapActionTypes.MoveEnd;
+
+  constructor(public payload: IMoveEndPayload) {}
+}
+
+export type MapActions = SelectTileSet | UnselectTile | MoveEnd;

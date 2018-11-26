@@ -1,5 +1,4 @@
-import {AppState} from './index';
-import {LivePlanes, OpenSkyState} from '../models/planes';
+import { OpenSkyState, Plane, createOpenSkyState, addOrCreateOpenSkyStateToPlane, LivePlanes} from '../models/planes';
 import {PlanesActions, PlanesActionTypes} from '../actions/planes';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
@@ -20,42 +19,15 @@ export function planesReducer(state = initialState,
 
       const newLiveStates: OpenSkyState[] = [];
       action.payload.states.map( stateArray => {
-        const newState: OpenSkyState = {
-          icao24:	stateArray[0],
-          callsign:	stateArray[1],
-          origin_country: stateArray[2],
-          time_position: stateArray[3],
-          last_contact:	stateArray[4],
-          longitude: stateArray[5],
-          latitude: stateArray[6],
-          geo_altitude:	stateArray[7],
-          on_ground:	stateArray[8],
-          velocity: stateArray[9],
-          true_track:	stateArray[10],
-          vertical_rate:	stateArray[11],
-          sensors:	stateArray[12],
-          baro_altitude: stateArray[13],
-          squawk:	stateArray[14],
-          spi:	stateArray[15],
-          position_source:	stateArray[16],
-        };
+        const newState: OpenSkyState = createOpenSkyState(stateArray);
         newLiveStates.push(newState);
       });
 
       for (const openSkyState of newLiveStates) {
-        if (state.livePlanes[openSkyState.icao24] !== undefined) {
-          state.livePlanes[openSkyState.icao24].currentState = openSkyState;
-          state.livePlanes[openSkyState.icao24].states.push(openSkyState);
-        } else {
-          const newPlane = {
-            icao24: openSkyState.icao24,
-            callsign: openSkyState.callsign,
-            origin_country: openSkyState.origin_country,
-            currentState: openSkyState,
-            states: [openSkyState]
-          };
-          state.livePlanes[openSkyState.icao24] = newPlane;
-        }
+        state.livePlanes[openSkyState.icao24] = addOrCreateOpenSkyStateToPlane(
+          state.livePlanes[openSkyState.icao24],
+          openSkyState
+        );
       }
 
       return {
@@ -86,4 +58,11 @@ export const getLivePlanes = createSelector(
 export const getLivePlanesLength = createSelector(
   getPlanesState,
   state => Object.keys(state.livePlanes).length
+);
+
+export const getAllPlanes = createSelector(
+  getLivePlanes,
+  planes => {
+    return Object.keys(planes).map(id => planes[id]);
+  }
 );

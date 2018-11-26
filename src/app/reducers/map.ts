@@ -1,15 +1,18 @@
 import { MapState } from './map';
-import {TileSet} from '../models/map';
-import {AppState} from './index';
+import {TileSet, ICameraState, IRectangle} from '../models/map';
 import {MapActions, MapActionTypes} from '../actions/map';
-import { createFeatureSelector, State, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export interface MapState {
   selectedTileSet: TileSet;
+  camera: ICameraState;
+  viewRectangle: IRectangle;
 }
 
 const initialState: MapState = {
-  selectedTileSet: undefined
+  selectedTileSet: undefined,
+  camera: undefined,
+  viewRectangle: undefined,
 };
 
 export function mapReducer(state = initialState,
@@ -21,10 +24,17 @@ export function mapReducer(state = initialState,
         selectedTileSet: action.payload
       };
 
-    case MapActionTypes.ResetPosition:
+    case MapActionTypes.UnselectTile:
       return {
         ...state,
         selectedTileSet: undefined
+      };
+
+    case MapActionTypes.MoveEnd:
+      return {
+        ...state,
+        camera: action.payload.camera,
+        viewRectangle: action.payload.viewRectangle
       };
 
     default:
