@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {TileSet, ICameraState, IRectangle, IMoveEndPayload} from '../models/map';
+import {TileSet, IMoveEndPayload} from '../../models/map';
 
 export enum MapActionTypes {
   SelectTileSet = '[Map] Select Tile Set',

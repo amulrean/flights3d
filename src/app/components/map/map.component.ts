@@ -1,10 +1,10 @@
-import { MoveEnd } from './../actions/map';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {TileSet, ICameraState, IRectangle, IMoveEndPayload} from '../models/map';
 import {Observable, Subscription} from 'rxjs';
-import {getSelectedTileSet, MapState} from '../reducers/map';
-import { getAllCesiumPlaneEntities } from '../reducers/cesium';
+import { TileSet, IMoveEndPayload, IRectangle, ICameraState } from '../../models/map';
+import { MapState, getSelectedTileSet } from '../../state/reducers/map';
+import { getAllCesiumPlaneEntities } from '../../state/reducers/cesium';
+import { MoveEnd } from '../../state/actions/map';
 
 @Component({
   selector: 'app-map',

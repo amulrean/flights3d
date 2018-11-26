@@ -1,12 +1,12 @@
-import { LivePlanes } from './../models/planes';
 import { Component, OnInit } from '@angular/core';
 import {Observable, timer} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {UnselectTile, SelectTileSet} from '../actions/map';
-import {TileSet} from '../models/map';
-import {RefreshStatesAll} from '../actions/planes';
-import {getSelectedTileSet, MapState} from '../reducers/map';
-import {getLivePlanes, getLivePlanesLength} from '../reducers/planes';
+import { TileSet } from '../../models/map';
+import { LivePlanes } from '../../models/planes';
+import { MapState, getSelectedTileSet } from '../../state/reducers/map';
+import { getLivePlanes, getLivePlanesLength } from '../../state/reducers/planes';
+import { SelectTileSet, UnselectTile } from '../../state/actions/map';
+import { RefreshStatesAll } from '../../state/actions/planes';
 
 @Component({
   selector: 'app-sidebar',

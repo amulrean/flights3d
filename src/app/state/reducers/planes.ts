@@ -1,4 +1,4 @@
-import { OpenSkyState, Plane, createOpenSkyState, addOrCreateOpenSkyStateToPlane, LivePlanes} from '../models/planes';
+import { OpenSkyState, createOpenSkyState, addOrCreateOpenSkyStateToPlane, LivePlanes} from '../../models/planes';
 import {PlanesActions, PlanesActionTypes} from '../actions/planes';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 

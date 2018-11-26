@@ -1,5 +1,5 @@
 import { MapState } from './map';
-import {TileSet, ICameraState, IRectangle} from '../models/map';
+import {TileSet, ICameraState, IRectangle} from '../../models/map';
 import {MapActions, MapActionTypes} from '../actions/map';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 

@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {OpenSkyStatesAllResponse} from '../models/planes';
+import {OpenSkyStatesAllResponse} from '../../models/planes';
 
 export enum PlanesActionTypes {
   RefreshStatesAll = '[Planes] Get States All',

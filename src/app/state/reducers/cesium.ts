@@ -1,6 +1,6 @@
 import { getAllPlanes } from './planes';
 import { createSelector } from '@ngrx/store';
-import { Plane } from '../models/planes';
+import { Plane } from '../../models/planes';
 
 export const getAllCesiumPlaneEntities = createSelector(
     getAllPlanes,
