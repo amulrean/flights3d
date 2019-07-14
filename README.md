@@ -12,6 +12,8 @@ Run `ng serve` for a dev server. Navigate to http://localhost:4200/ The app will
 
 This project is deployed to Firebase and avalible at https://flights3d-amulrean.firebaseapp.com/
 
+Ensure Firebase CLI is installed and logged in: https://firebase.google.com/docs/cli
+
 - `ng build --prod`
 - test build locally `firebase serve`
 - Deploy to firebase `firebase deploy`
